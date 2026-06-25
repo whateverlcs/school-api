@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using MapsterMapper;
 using School.Communication.Responses;
 using School.Domain.Repositories.Academy;
 using School.Exceptions;
@@ -11,9 +11,7 @@ namespace School.Application.UseCases.Academy.GetByName
         private readonly IMapper _mapper;
         private readonly IAcademyReadOnlyRepository _repository;
 
-        public GetAcademyByNameUseCase(
-            IMapper mapper,
-            IAcademyReadOnlyRepository repository)
+        public GetAcademyByNameUseCase(IMapper mapper, IAcademyReadOnlyRepository repository)
         {
             _mapper = mapper;
             _repository = repository;

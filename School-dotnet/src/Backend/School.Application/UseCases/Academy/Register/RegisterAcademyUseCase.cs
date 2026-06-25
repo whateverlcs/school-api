@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using MapsterMapper;
 using School.Communication.Requests;
 using School.Communication.Responses;
 using School.Domain.Extensions;
@@ -17,7 +17,8 @@ namespace School.Application.UseCases.Academy.Register
         public RegisterAcademyUseCase(
             IAcademyWriteOnlyRepository repository,
             IUnitOfWork unitOfWork,
-            IMapper mapper)
+            IMapper mapper
+        )
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
@@ -42,7 +43,9 @@ namespace School.Application.UseCases.Academy.Register
             var result = new AcademyValidator().Validate(request);
 
             if (result.IsValid.IsFalse())
-                throw new ErrorOnValidationException(result.Errors.Select(e => e.ErrorMessage).Distinct().ToList());
+                throw new ErrorOnValidationException(
+                    result.Errors.Select(e => e.ErrorMessage).Distinct().ToList()
+                );
         }
     }
 }

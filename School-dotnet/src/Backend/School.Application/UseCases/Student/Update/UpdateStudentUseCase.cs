@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using MapsterMapper;
 using School.Communication.Requests;
 using School.Domain.Extensions;
 using School.Domain.Repositories;
@@ -17,7 +17,8 @@ namespace School.Application.UseCases.Student.Update
         public UpdateStudentUseCase(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            IStudentUpdateOnlyRepository repository)
+            IStudentUpdateOnlyRepository repository
+        )
         {
             _unitOfWork = unitOfWork;
             _repository = repository;
@@ -45,7 +46,9 @@ namespace School.Application.UseCases.Student.Update
             var result = new StudentValidator().Validate(request);
 
             if (result.IsValid.IsFalse())
-                throw new ErrorOnValidationException(result.Errors.Select(e => e.ErrorMessage).Distinct().ToList());
+                throw new ErrorOnValidationException(
+                    result.Errors.Select(e => e.ErrorMessage).Distinct().ToList()
+                );
         }
     }
 }

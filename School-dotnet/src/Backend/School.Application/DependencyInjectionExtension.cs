@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Mapster;
+using MapsterMapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using School.Application.Services.AutoMapper;
+using School.Application.Services.Mapping;
 using School.Application.UseCases.Academy.Delete;
 using School.Application.UseCases.Academy.GetAllAcademys;
 using School.Application.UseCases.Academy.GetByCity;
@@ -27,30 +29,39 @@ namespace School.Application;
 
 public static class DependencyInjectionExtension
 {
-    public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
+    public static void AddApplication(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
-        AddAutoMapper(services);
+        AddMapster(services);
         AddIdEncoder(services, configuration);
         AddUseCases(services);
     }
 
-    private static void AddAutoMapper(IServiceCollection services)
+    private static void AddMapster(IServiceCollection services)
     {
-        services.AddScoped(option => new AutoMapper.MapperConfiguration(autoMapperOptions =>
-        {
-            var sqids = option.GetService<SqidsEncoder<long>>()!;
+        var config = new TypeAdapterConfig();
 
-            autoMapperOptions.AddProfile(new AutoMapping(sqids));
-        }).CreateMapper());
+        services.AddScoped(provider =>
+        {
+            var sqids = provider.GetRequiredService<SqidsEncoder<long>>();
+            new AutoMapping(sqids).Register(config);
+            return config;
+        });
+
+        services.AddScoped<IMapper, ServiceMapper>();
     }
 
     private static void AddIdEncoder(IServiceCollection services, IConfiguration configuration)
     {
-        var sqids = new SqidsEncoder<long>(new()
-        {
-            MinLength = 3,
-            Alphabet = configuration.GetValue<string>("Settings:IdCryptographyAlphabet")!
-        });
+        var sqids = new SqidsEncoder<long>(
+            new()
+            {
+                MinLength = 3,
+                Alphabet = configuration.GetValue<string>("Settings:IdCryptographyAlphabet")!,
+            }
+        );
 
         services.AddSingleton(sqids);
     }

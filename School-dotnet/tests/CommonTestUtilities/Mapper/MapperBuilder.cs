@@ -1,6 +1,8 @@
-﻿using AutoMapper;
-using CommonTestUtilities.IdEncryption;
-using School.Application.Services.AutoMapper;
+﻿using CommonTestUtilities.IdEncryption;
+using Mapster;
+using MapsterMapper;
+using Microsoft.Extensions.DependencyInjection;
+using School.Application.Services.Mapping;
 
 namespace CommonTestUtilities.Mapper
 {
@@ -10,12 +12,13 @@ namespace CommonTestUtilities.Mapper
         {
             var idEncripter = IdEncripterBuilder.Build();
 
-            var mapper = new MapperConfiguration(options =>
-            {
-                options.AddProfile(new AutoMapping(idEncripter));
-            }).CreateMapper();
+            var config = new TypeAdapterConfig();
+            new AutoMapping(idEncripter).Register(config);
 
-            return mapper;
+            return new ServiceMapper(
+                new ServiceCollection().AddSingleton(config).BuildServiceProvider(),
+                config
+            );
         }
     }
 }

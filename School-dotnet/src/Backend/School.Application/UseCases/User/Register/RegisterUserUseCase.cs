@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using MapsterMapper;
 using School.Communication.Requests;
 using School.Communication.Responses;
 using School.Domain.Entities;
@@ -32,7 +32,8 @@ public class RegisterUserUseCase : IRegisterUserUseCase
         IAccessTokenGenerator accessTokenGenerator,
         IMapper mapper,
         ITokenRepository tokenRepository,
-        IRefreshTokenGenerator refreshTokenGenerator)
+        IRefreshTokenGenerator refreshTokenGenerator
+    )
     {
         _writeOnlyRepository = writeOnlyRepository;
         _readOnlyRepository = readOnlyRepository;
@@ -63,8 +64,8 @@ public class RegisterUserUseCase : IRegisterUserUseCase
             Tokens = new ResponseTokensJson
             {
                 AccessToken = _accessTokenGenerator.Generate(user.UserIdentifier),
-                RefreshToken = refreshToken
-            }
+                RefreshToken = refreshToken,
+            },
         };
     }
 
@@ -72,11 +73,9 @@ public class RegisterUserUseCase : IRegisterUserUseCase
     {
         var refreshToken = _refreshTokenGenerator.Generate();
 
-        await _tokenRepository.SaveNewRefreshToken(new RefreshToken
-        {
-            Value = refreshToken,
-            UserId = user.Id
-        });
+        await _tokenRepository.SaveNewRefreshToken(
+            new RefreshToken { Value = refreshToken, UserId = user.Id }
+        );
 
         await _unitOfWork.Commit();
 
@@ -91,7 +90,12 @@ public class RegisterUserUseCase : IRegisterUserUseCase
 
         var emailExist = await _readOnlyRepository.ExistActiveUserWithEmail(request.Email);
         if (emailExist)
-            result.Errors.Add(new FluentValidation.Results.ValidationFailure(string.Empty, ResourceMessagesException.EMAIL_ALREADY_REGISTERED));
+            result.Errors.Add(
+                new FluentValidation.Results.ValidationFailure(
+                    string.Empty,
+                    ResourceMessagesException.EMAIL_ALREADY_REGISTERED
+                )
+            );
 
         if (result.IsValid.IsFalse())
         {

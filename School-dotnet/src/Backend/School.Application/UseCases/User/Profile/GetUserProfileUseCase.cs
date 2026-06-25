@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using MapsterMapper;
 using School.Communication.Responses;
 using School.Domain.Services.LoggedUser;
 

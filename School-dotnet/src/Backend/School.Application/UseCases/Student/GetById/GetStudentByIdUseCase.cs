@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using MapsterMapper;
 using School.Communication.Responses;
 using School.Domain.Repositories.Student;
 using School.Exceptions;
@@ -11,9 +11,7 @@ namespace School.Application.UseCases.Student.GetById
         private readonly IMapper _mapper;
         private readonly IStudentReadOnlyRepository _repository;
 
-        public GetStudentByIdUseCase(
-            IMapper mapper,
-            IStudentReadOnlyRepository repository)
+        public GetStudentByIdUseCase(IMapper mapper, IStudentReadOnlyRepository repository)
         {
             _mapper = mapper;
             _repository = repository;
